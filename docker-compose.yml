@@ -1,0 +1,53 @@
+version: '3.8'
+services:
+  ghost-dev:
+    image: ghost:latest
+    ports:
+      - "3000:2368"
+    volumes:
+      - ./data-dev:/var/lib/ghost/content
+    environment:
+      - NODE_ENV=development
+      - database__client=mysql
+      - database__connection__host=mysql-dev
+      - database__connection__user=root
+      - database__connection__password=rootpassword
+      - database__connection__database=ghost_dev
+    depends_on:
+      - mysql-dev
+
+  ghost-prod:
+    image: ghost:latest
+    ports:
+      - "2368:2368"
+    volumes:
+      - ./data-prod:/var/lib/ghost/content
+    environment:
+      - NODE_ENV=production
+      - database__client=mysql
+      - database__connection__host=mysql-prod
+      - database__connection__user=root
+      - database__connection__password=rootpassword
+      - database__connection__database=ghost_prod
+    depends_on:
+      - mysql-prod
+
+  mysql-dev:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: ghost_dev
+    volumes:
+      - mysql-dev-data:/var/lib/mysql
+
+  mysql-prod:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: ghost_prod
+    volumes:
+      - mysql-prod-data:/var/lib/mysql
+
+volumes:
+  mysql-dev-data:
+  mysql-prod-data:
